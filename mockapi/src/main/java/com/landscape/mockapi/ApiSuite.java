@@ -10,6 +10,7 @@ public class ApiSuite {
 
     private String method;
     private String fileName;
+    private long timeDelay = 0l;
 
     public ApiSuite(String method, String fileName) {
         this.method = method;
@@ -30,5 +31,14 @@ public class ApiSuite {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public long getTimeDelay() {
+        return timeDelay;
+    }
+
+    public ApiSuite setTimeDelay(long timeDelay) {
+        this.timeDelay = timeDelay;
+        return this;
     }
 }
