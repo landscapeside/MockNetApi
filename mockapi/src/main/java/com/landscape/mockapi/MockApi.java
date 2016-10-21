@@ -40,7 +40,7 @@ public class MockApi {
         }
     }
 
-    public static void mockRequest(final Context context,final String url,final IMock mockListener) {
+    public static boolean mockRequest(final Context context,final String url,final IMock mockListener) {
         for (final ApiSuite suite : suites) {
             if (url.contains(suite.getMethod())) {
                 if (suite.getTimeDelay() > 0) {
@@ -63,8 +63,10 @@ public class MockApi {
                         mockListener.success(mockResponse(context,url));
                     }
                 }
+                return true;
             }
         }
+        return false;
     }
 
     private static void sleep(long time) {
