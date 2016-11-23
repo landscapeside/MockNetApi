@@ -3,8 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MockNetApi.iml" filepath="$PROJECT_DIR$/MockNetApi.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/mockapi/mockapi.iml" filepath="$PROJECT_DIR$/mockapi/mockapi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mockNet/mockNet.iml" filepath="$PROJECT_DIR$/mockNet/mockNet.iml" />
     </modules>
   </component>
 </project>
