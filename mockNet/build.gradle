@@ -58,15 +58,15 @@ dependencies {
       exclude group: 'com.android.support', module: 'support-annotations'
     })
   }
-  api "com.android.support:appcompat-v7:$SupportVersion"
+  implementation "com.android.support:appcompat-v7:$SupportVersion"
   testImplementation 'junit:junit:4.12'
-  api 'com.google.code.gson:gson:2.6.2'
-  api 'com.github.orhanobut:logger:1.12'
+  implementation 'com.google.code.gson:gson:2.6.2'
+  implementation 'com.github.orhanobut:logger:1.12'
 
-  api "io.reactivex.rxjava2:rxandroid:$rxjavaAndroidVersion"
-  api "io.reactivex.rxjava2:rxjava:$rxjavaVersion"
+  implementation "io.reactivex.rxjava2:rxandroid:$rxjavaAndroidVersion"
+  implementation "io.reactivex.rxjava2:rxjava:$rxjavaVersion"
 
-  api "com.squareup.retrofit2:converter-gson:$converterGsonVersion"
-  api "com.squareup.retrofit2:retrofit:$retrofitVersion"
-  api "com.squareup.retrofit2:adapter-rxjava2:$retrofitRxAdatperVersion"
+  implementation "com.squareup.retrofit2:converter-gson:$converterGsonVersion"
+  implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+  implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitRxAdatperVersion"
 }
