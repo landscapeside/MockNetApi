@@ -1,108 +1,105 @@
 package com.landscape.mocknetapi.api;
 
-import android.app.Activity;
 import android.content.Context;
 
-
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import com.landscape.mocknetapi.util.FileReader;
 
+import io.reactivex.Flowable;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 
 /**
  * Created by landscape on 2016/10/20.
  */
-
 public class MockApi {
 
-    private static final String prefix = "mockdata";
-    private static List<ApiSuite> suites = new ArrayList<>();
+  private Context context;
+  private MockConvertor convertor;
 
-    private static ExecutorService executorService = Executors.newFixedThreadPool(20);
+  private MockApi(Builder builder) {
+    context = builder.context;
+    convertor = builder.convertor;
+  }
 
-    public static void addSuite(ApiSuite suite) {
-        for (ApiSuite apiSuite : suites) {
-            if (suite.getMethod().equalsIgnoreCase(apiSuite.getMethod())) {
-                suites.remove(apiSuite);
-                break;
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  public <T> T create(final Class<T> service) {
+
+    return (T) Proxy.newProxyInstance(service.getClassLoader(), new Class<?>[] { service },
+        new InvocationHandler() {
+          @Override public Object invoke(Object proxy, Method method, @Nullable Object[] args)
+              throws Throwable {
+            // If the method is a method from Object then defer to normal invocation.
+            if (method.getDeclaringClass() == Object.class) {
+              return method.invoke(this, args);
             }
-        }
-        suites.add(suite);
-    }
-
-    public static void setTimeDelay(long timeDelay) {
-        for (ApiSuite apiSuite : suites) {
-            apiSuite.setTimeDelay(timeDelay);
-        }
-    }
-
-    public static boolean mockRequest(final Context context,final String url,final IMock mockListener) {
-        for (final ApiSuite suite : suites) {
-            if (url.contains(suite.getMethod())) {
-                if (suite.getTimeDelay() > 0) {
-                    if (executorService.isShutdown()) {
-                        executorService = Executors.newFixedThreadPool(20);
-                    }
-                    executorService.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            MockApi.sleep(suite.getTimeDelay());
-                            if (mockListener != null) {
-                                ((Activity)context).runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mockListener.success(mockResponse(context,url));
-                                    }
-                                });
-                            }
-                        }
-                    });
-                } else {
-                    if (mockListener != null) {
-                        mockListener.success(mockResponse(context,url));
-                    }
-                }
-                return true;
+            Type returnType = method.getGenericReturnType();
+            if (AnnotationParser.isMockable(method)) {
+              String mockResp = matchMockResponse(context, AnnotationParser.getMockPath(method));
+              if (isMockDataAvailable(mockResp, returnType)) {
+                return Flowable.just(convertor.convert(mockResp, returnType));
+              } else {
+                return genErrorFlowable("mock data not exist");
+              }
+            } else {
+              return genErrorFlowable("method is not mockable");
             }
-        }
-        return false;
+          }
+        });
+  }
+
+  private boolean isMockDataAvailable(String mockResp, Type returnType) {
+    return !TextUtils.isEmpty(mockResp) && null != convertor.convert(mockResp, returnType);
+  }
+
+  private Flowable genErrorFlowable(String errMsg) {
+    return Flowable.error(new Throwable(errMsg));
+  }
+
+  private static final String prefix = "mockdata";
+  private static final String suffix = ".json";
+
+  private String matchMockResponse(Context context, String url) {
+    String sBuffer = null;
+    try {
+      sBuffer =
+          FileReader.requestMockString(context, prefix + File.separator + url + suffix);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return sBuffer;
+  }
+
+  public static final class Builder {
+    private Context context;
+    private MockConvertor convertor = new MockConvertor();
+
+    private Builder() {
     }
 
-    private static void sleep(long time) {
-        try {
-            if (time > 0) {
-                TimeUnit.MILLISECONDS.sleep(time);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Builder context(Context val) {
+      context = val;
+      return this;
     }
 
-    public static String mockResponse(Context context,String url) {
-        String sBuffer = null;
-        for (ApiSuite suite : suites) {
-            if (url.contains(suite.getMethod())) {
-                try {
-                    sBuffer = FileReader.requestMockString(context, prefix + File.separator+suite.getFileName());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return sBuffer;
+    public Builder convertor(MockConvertor val) {
+      convertor = val;
+      return this;
     }
 
-    public static void unInstall() {
-        executorService.shutdown();
+    public MockApi build() {
+      if (context == null) {
+        throw new IllegalArgumentException("context cannot be empty!");
+      }
+      return new MockApi(this);
     }
-
-    public interface IMock{
-        void success(String response);
-    }
-
+  }
 }

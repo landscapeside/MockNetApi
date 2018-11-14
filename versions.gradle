@@ -1,0 +1,20 @@
+ext {
+
+  appVersion = 204
+  appVersionName = "2.0.4"
+
+  compileSdkVersion = 27
+  buildToolsVersion = "27.0.2"
+  SupportVersion = "27.0.2"
+  minSdkVersion = 14
+  targetSdkVersion = 27
+
+  rxjavaAndroidVersion = '2.0.2'
+  rxjavaVersion = '2.1.13'
+
+  retrofitVersion = '2.4.0'
+  retrofitRxAdatperVersion = '2.4.0'
+
+  converterGsonVersion = '2.4.0'
+
+}
