@@ -1,7 +1,7 @@
 ext {
 
-  appVersion = 203
-  appVersionName = "2.0.3"
+  appVersion = 204
+  appVersionName = "2.0.4"
 
   compileSdkVersion = 27
   buildToolsVersion = "27.0.2"
