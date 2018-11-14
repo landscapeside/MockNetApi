@@ -11,20 +11,15 @@
     android:orientation="vertical"
     tools:context="com.landscape.mocknetapi.sample.MockMainActivity">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="start mock"
+        android:onClick="startMock"
+        />
+
     <TextView
         android:id="@+id/tv_result_mock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
-
-    <TextView
-        android:id="@+id/tv_result1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!" />
-
-    <TextView
-        android:id="@+id/tv_result2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />

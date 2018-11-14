@@ -1,5 +1,8 @@
 package com.landscape.mocknetapi.sample;
 
+import com.google.gson.Gson;
+import com.landscape.mocknetapi.util.JSONS;
+
 /**
  * Created by landscape on 2016/10/20.
  */
@@ -49,5 +52,9 @@ public class UserBean {
 
     public void setJobs(int jobs) {
         this.jobs = jobs;
+    }
+
+    @Override public String toString() {
+        return JSONS.parseJson(this);
     }
 }

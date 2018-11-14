@@ -1,4 +1,4 @@
-package com.landscape.mocknetapi.sample;
+package com.landscape.mocknetapi.util;
 
 import android.text.TextUtils;
 
