@@ -9,6 +9,7 @@ group='com.github.landscapeside'
 
 android {
   compileSdkVersion rootProject.ext.compileSdkVersion
+  buildToolsVersion rootProject.ext.buildToolsVersion
 
   defaultConfig {
     if (!isLibModule.toBoolean()) {
@@ -54,7 +55,7 @@ dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   if (isLibModule.toBoolean()) {
   } else {
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestApi('com.android.support.test.espresso:espresso-core:2.2.2', {
       exclude group: 'com.android.support', module: 'support-annotations'
     })
   }
