@@ -5,11 +5,8 @@ if (isLibModule.toBoolean()) {
 }
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.landscapeside'
-
 android {
   compileSdkVersion rootProject.ext.compileSdkVersion
-  buildToolsVersion rootProject.ext.buildToolsVersion
 
   defaultConfig {
     if (!isLibModule.toBoolean()) {
@@ -19,7 +16,7 @@ android {
     targetSdkVersion rootProject.ext.targetSdkVersion
     versionCode rootProject.ext.appVersion
     versionName rootProject.ext.appVersionName
-    flavorDimensions "${rootProject.ext.appVersion}"
+
     if (!isLibModule.toBoolean()) {
       testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -30,6 +27,10 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
+
+  defaultPublishConfig "mockModeRelease"
+
+  flavorDimensions "${rootProject.ext.appVersion}"
 
   productFlavors{
     mockMode{
@@ -51,6 +52,15 @@ android {
   }
 }
 
+task sourcesJar(type: Jar) {
+  classifier = 'sources'
+  from android.sourceSets.main.javaDirectories
+}
+
+artifacts {
+  archives sourcesJar
+}
+
 dependencies {
   implementation fileTree(include: ['*.jar'], dir: 'libs')
   if (isLibModule.toBoolean()) {
@@ -70,4 +80,26 @@ dependencies {
   implementation "com.squareup.retrofit2:converter-gson:$converterGsonVersion"
   implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
   implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitRxAdatperVersion"
+}
+
+group='com.github.landscapeside.MockNetApi'
+version = rootProject.ext.appVersionName
+
+if (android.productFlavors.size() > 0) {
+  android.libraryVariants.all { variant ->
+    if (variant.name.toLowerCase().contains("debug")) {
+      return
+    }
+
+    def bundleTask = tasks["bundle${variant.name.capitalize()}"]
+
+    artifacts {
+      archives(bundleTask.archivePath) {
+        classifier variant.flavorName
+        builtBy bundleTask
+        name = project.name
+      }
+    }
+
+  }
 }
