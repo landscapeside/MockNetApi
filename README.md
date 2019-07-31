@@ -7,7 +7,7 @@ Mock Json
 
 调用方式原始，适用于非注解类网络请求方式，如AsyncHttpClient
 
-##### v2.0
+##### v2.1
 
 **仅仅**支持retrofit和rxjava2
 
@@ -95,7 +95,7 @@ Mock Json
 应用build.gradle添加依赖
 
   ```groovy
-  implementation "com.github.landscapeside:MockNetApi:v2.0.0"
+  implementation "com.github.landscapeside:MockNetApi:2.1.0"
   ```
   
 * 注解
@@ -123,7 +123,7 @@ Mock Json
   
 * 构建MockApi对象，最好单例
   ```java
-  MockApi mockApi = MockApi.builder().context(appContext).build();
+  MockApi mockApi = MockApi.builder().context(appContext).delayMilliSeconds(3000).build();
   ```
 
 * 模拟网络请求
