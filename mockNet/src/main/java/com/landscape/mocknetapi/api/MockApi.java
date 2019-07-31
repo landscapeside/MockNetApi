@@ -1,11 +1,9 @@
 package com.landscape.mocknetapi.api;
 
 import android.content.Context;
-
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import com.landscape.mocknetapi.util.FileReader;
-
 import io.reactivex.Flowable;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +11,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by landscape on 2016/10/20.
@@ -21,10 +20,12 @@ public class MockApi {
 
   private Context context;
   private MockConvertor convertor;
+  private long delayMilliSeconds;
 
   private MockApi(Builder builder) {
     context = builder.context;
     convertor = builder.convertor;
+    delayMilliSeconds = builder.delayMilliSeconds;
   }
 
   public static Builder builder() {
@@ -45,7 +46,8 @@ public class MockApi {
             if (AnnotationParser.isMockable(method)) {
               String mockResp = matchMockResponse(context, AnnotationParser.getMockPath(method));
               if (isMockDataAvailable(mockResp, returnType)) {
-                return Flowable.just(convertor.convert(mockResp, returnType));
+                return Flowable.just(convertor.convert(mockResp, returnType))
+                    .delay(delayMilliSeconds, TimeUnit.MILLISECONDS);
               } else {
                 return genErrorFlowable("mock data not exist");
               }
@@ -81,6 +83,7 @@ public class MockApi {
   public static final class Builder {
     private Context context;
     private MockConvertor convertor = new MockConvertor();
+    private long delayMilliSeconds = 0;
 
     private Builder() {
     }
@@ -92,6 +95,11 @@ public class MockApi {
 
     public Builder convertor(MockConvertor val) {
       convertor = val;
+      return this;
+    }
+
+    public Builder delayMilliSeconds(long val) {
+      delayMilliSeconds = val;
       return this;
     }
 

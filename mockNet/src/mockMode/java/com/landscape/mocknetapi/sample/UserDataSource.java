@@ -10,7 +10,7 @@ public class UserDataSource implements UserRepository {
   UserApi userApi;
 
   public UserDataSource(final Context context) {
-    mockApi = MockApi.builder().context(context).build();
+    mockApi = MockApi.builder().context(context).delayMilliSeconds(3000).build();
     userApi = mockApi.create(UserApi.class);
   }
 

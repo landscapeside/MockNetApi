@@ -1,17 +1,15 @@
 package com.landscape.mocknetapi.sample;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
-
 import android.widget.Toast;
-import io.reactivex.Flowable;
+import com.orhanobut.logger.Logger;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
+import io.reactivex.schedulers.Schedulers;
 
 public class MockMainActivity extends AppCompatActivity {
   TextView tvResult;
@@ -25,19 +23,23 @@ public class MockMainActivity extends AppCompatActivity {
 
   public void startMock(View view) {
     UserRepository repository = new UserDataSource(this);
-    repository.requestUserInfo("mock!").subscribe(new Consumer<UserBean>() {
-      @Override public void accept(UserBean userBean) throws Exception {
-        tvResult.setText(userBean.toString());
-      }
-    }, new Consumer<Throwable>() {
-      @Override public void accept(Throwable throwable) throws Exception {
-        Toast.makeText(MockMainActivity.this, throwable.getMessage(), Toast.LENGTH_LONG).show();
-      }
-    }, new Action() {
-      @Override public void run() throws Exception {
-        Toast.makeText(MockMainActivity.this, "complete", Toast.LENGTH_LONG).show();
-      }
-    });
+    repository.requestUserInfo("mock!")
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Consumer<UserBean>() {
+          @Override public void accept(UserBean userBean) throws Exception {
+            tvResult.setText(userBean.toString());
+            Logger.d(userBean.toString());
+          }
+        }, new Consumer<Throwable>() {
+          @Override public void accept(Throwable throwable) throws Exception {
+            Toast.makeText(MockMainActivity.this, throwable.getMessage(), Toast.LENGTH_LONG).show();
+          }
+        }, new Action() {
+          @Override public void run() throws Exception {
+            Toast.makeText(MockMainActivity.this, "complete", Toast.LENGTH_LONG).show();
+          }
+        });
   }
 
   @Override
