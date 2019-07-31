@@ -1,6 +1,6 @@
 Mock Json
 ----
-[![](https://jitpack.io/v/landscapeside/MockNetApi.svg)](https://jitpack.io/#landscapeside/MockNetApi)
+[![](https://www.jitpack.io/v/landscapeside/MockNetApi.svg)](https://www.jitpack.io/#landscapeside/MockNetApi)
 
 ### feature
 ##### v1.0
