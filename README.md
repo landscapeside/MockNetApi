@@ -95,7 +95,7 @@ Mock Json
 应用build.gradle添加依赖
 
   ```groovy
-  implementation "com.github.landscapeside:MockNetApi:2.1.0"
+  implementation "com.github.landscapeside:MockNetApi:2.1.1"
   ```
   
 * 注解
