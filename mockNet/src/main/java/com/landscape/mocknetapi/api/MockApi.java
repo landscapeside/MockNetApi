@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import com.landscape.mocknetapi.util.FileReader;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -21,11 +22,13 @@ public class MockApi {
   private Context context;
   private MockConvertor convertor;
   private long delayMilliSeconds;
+  private boolean useObservable = false;
 
   private MockApi(Builder builder) {
     context = builder.context;
     convertor = builder.convertor;
     delayMilliSeconds = builder.delayMilliSeconds;
+    useObservable = builder.useObservable;
   }
 
   public static Builder builder() {
@@ -46,13 +49,26 @@ public class MockApi {
             if (AnnotationParser.isMockable(method)) {
               String mockResp = matchMockResponse(context, AnnotationParser.getMockPath(method));
               if (isMockDataAvailable(mockResp, returnType)) {
-                return Flowable.just(convertor.convert(mockResp, returnType))
-                    .delay(delayMilliSeconds, TimeUnit.MILLISECONDS);
+                if (useObservable) {
+                  return Observable.just(convertor.convert(mockResp, returnType))
+                      .delay(delayMilliSeconds, TimeUnit.MILLISECONDS);
+                } else {
+                  return Flowable.just(convertor.convert(mockResp, returnType))
+                      .delay(delayMilliSeconds, TimeUnit.MILLISECONDS);
+                }
               } else {
-                return genErrorFlowable("mock data not exist");
+                if (useObservable) {
+                  return genErrorObservable("mock data not exist");
+                } else {
+                  return genErrorFlowable("mock data not exist");
+                }
               }
             } else {
-              return genErrorFlowable("method is not mockable");
+              if (useObservable) {
+                return genErrorObservable("method is not mockable");
+              } else {
+                return genErrorFlowable("method is not mockable");
+              }
             }
           }
         });
@@ -64,6 +80,9 @@ public class MockApi {
 
   private Flowable genErrorFlowable(String errMsg) {
     return Flowable.error(new Throwable(errMsg));
+  }
+  private Observable genErrorObservable(String errMsg) {
+    return Observable.error(new Throwable(errMsg));
   }
 
   private static final String prefix = "mockdata";
@@ -84,6 +103,7 @@ public class MockApi {
     private Context context;
     private MockConvertor convertor = new MockConvertor();
     private long delayMilliSeconds = 0;
+    private boolean useObservable = false;
 
     private Builder() {
     }
@@ -100,6 +120,11 @@ public class MockApi {
 
     public Builder delayMilliSeconds(long val) {
       delayMilliSeconds = val;
+      return this;
+    }
+
+    public Builder userObservable(boolean useObservable) {
+      this.useObservable = useObservable;
       return this;
     }
 

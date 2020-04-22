@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MockNetApi.iml" filepath="$PROJECT_DIR$/MockNetApi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mockNet/MockNetApi-mockNet.iml" filepath="$PROJECT_DIR$/mockNet/MockNetApi-mockNet.iml" group="MockNetApi/mockNet" />
       <module fileurl="file://$PROJECT_DIR$/mockNet/mockNet.iml" filepath="$PROJECT_DIR$/mockNet/mockNet.iml" />
+      <module fileurl="file://$PROJECT_DIR$/project-MockNetApi.iml" filepath="$PROJECT_DIR$/project-MockNetApi.iml" group="MockNetApi" />
     </modules>
   </component>
 </project>
